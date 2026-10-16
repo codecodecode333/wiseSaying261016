@@ -1,4 +1,114 @@
 package com.back.domain.wiseSaying.repository;
 
+import com.back.domain.wiseSaying.entity.WiseSaying;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
 public class WiseSayingRepository {
+    private final String DB_PATH = "db/wiseSaying";
+
+    public void saveWiseSaying(WiseSaying wiseSaying, int lastId) throws IOException {
+        File dir = new File(DB_PATH);
+        if (!dir.exists()){
+            dir.mkdirs();
+        }
+
+        String jsonStr = "{\n";
+        jsonStr += "  \"id\": " + wiseSaying.getId() + ",\n";
+        jsonStr += "  \"content\": \"" + wiseSaying.getContent() + "\",\n";
+        jsonStr += "  \"author\": \"" + wiseSaying.getAuthor() + "\"\n";
+        jsonStr += "}";
+
+        FileWriter writer = new FileWriter("db/wiseSaying/" + wiseSaying.getId() + ".json");
+        writer.write(jsonStr);
+        writer.close();
+
+        FileWriter writer1 = new FileWriter("db/wiseSaying/lastId.txt");
+        writer1.write(String.valueOf(lastId));
+        writer1.close();
+    }
+
+    public boolean deleteWiseSaying(int targetId){
+        File file = new File("db/wiseSaying/" + targetId + ".json");
+        if (!file.exists()) {
+            return false; // 삭제 실패
+        }
+        return file.delete();
+    }
+
+    // WiseSayingRepository 클래스 안에 추가
+    public List<WiseSaying> findAll() {
+        List<WiseSaying> wiseSayings = new ArrayList<>();
+        File dir = new File(DB_PATH);
+
+        if (!dir.exists() || !dir.isDirectory()) {
+            return wiseSayings;
+        }
+
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return wiseSayings;
+        }
+
+        for (File file : files) {
+            String fileName = file.getName();
+
+            if (fileName.endsWith(".json")) {
+                try {
+                    String jsonContent = new String(Files.readAllBytes(file.toPath()));
+
+                    int idIndex = jsonContent.indexOf("\"id\":");
+                    int idEndIndex = jsonContent.indexOf(",", idIndex);
+                    int id = Integer.parseInt(jsonContent.substring(idIndex + 5, idEndIndex).trim());
+
+                    int contentIndex = jsonContent.indexOf("\"content\":");
+                    int contentStartIndex = jsonContent.indexOf("\"", contentIndex + 10) + 1;
+                    int contentEndIndex = jsonContent.indexOf("\"", contentStartIndex);
+                    String content = jsonContent.substring(contentStartIndex, contentEndIndex);
+
+                    int authorIndex = jsonContent.indexOf("\"author\":");
+                    int authorStartIndex = jsonContent.indexOf("\"", authorIndex + 9) + 1;
+                    int authorEndIndex = jsonContent.indexOf("\"", authorStartIndex);
+                    String author = jsonContent.substring(authorStartIndex, authorEndIndex);
+
+                    wiseSayings.add(new WiseSaying(id, content, author));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return wiseSayings;
+    }
+
+    public void saveData(){
+        List<WiseSaying> wiseSayings = findAll();
+
+        boolean isFirst = true;
+        String Datajson = "[\n";
+        for(int i=1; i < wiseSayings.size(); i++){
+            WiseSaying ws = wiseSayings.get(i);
+            if(!isFirst == true) {
+                Datajson += ",\n";
+            }
+            Datajson += "   {\n";
+            Datajson += "       \"id\": " + ws.getId() + ",\n";
+            Datajson += "       \"content\": \"" + ws.getContent() + "\",\n";
+            Datajson += "       \"author\": \"" + ws.getAuthor() + "\"\n";
+            Datajson += "   }";
+            isFirst = false;
+        }
+        Datajson += "\n]";
+
+        try (FileWriter writer = new FileWriter(DB_PATH + "/data.json")) {
+            writer.write(Datajson);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
