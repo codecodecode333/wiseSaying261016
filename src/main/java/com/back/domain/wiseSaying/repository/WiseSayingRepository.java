@@ -24,13 +24,24 @@ public class WiseSayingRepository {
         jsonStr += "  \"author\": \"" + wiseSaying.getAuthor() + "\"\n";
         jsonStr += "}";
 
-        FileWriter writer = new FileWriter("db/wiseSaying/" + wiseSaying.getId() + ".json");
-        writer.write(jsonStr);
-        writer.close();
+        try (FileWriter writer = new FileWriter(DB_PATH + "/" + wiseSaying.getId() + ".json")) {
+            writer.write(jsonStr);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-        FileWriter writer1 = new FileWriter("db/wiseSaying/lastId.txt");
-        writer1.write(String.valueOf(lastId));
-        writer1.close();
+    public void saveLastId(int lastId) {
+        File dir = new File(DB_PATH);
+        if (!dir.exists()){
+            dir.mkdirs();
+        }
+
+        try (FileWriter writer = new FileWriter(DB_PATH + "/lastId.txt")) {
+            writer.write(String.valueOf(lastId));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean deleteWiseSaying(int targetId){
@@ -86,12 +97,12 @@ public class WiseSayingRepository {
         return wiseSayings;
     }
 
-    public void saveData(){
+    public void saveDataJson(){
         List<WiseSaying> wiseSayings = findAll();
 
         boolean isFirst = true;
         String Datajson = "[\n";
-        for(int i=1; i < wiseSayings.size(); i++){
+        for(int i=0; i < wiseSayings.size(); i++){
             WiseSaying ws = wiseSayings.get(i);
             if(!isFirst == true) {
                 Datajson += ",\n";
