@@ -102,7 +102,7 @@ public class Main {
                 writer1.write(String.valueOf(lastId));
                 writer1.close();
 
-                System.out.println(lastId++ + "번 명령이 등록되었습니다.");
+                System.out.println(lastId++ + "번 명언이 등록되었습니다.");
             }
 
             if(cmd.equals("목록")) {
@@ -151,7 +151,7 @@ public class Main {
                     System.out.print("명언 : " + authorarr[targetId]);
                     String wise = sc.nextLine().trim();
                     System.out.println("작가(기존) : ");
-                    System.out.print("명언 : ");
+                    System.out.print("작가 : ");
                     String author = sc.nextLine().trim();
 
                     wisearr[targetId] = wise;
