@@ -162,12 +162,12 @@ public class Main {
 
                     if (file.exists()) {
                         String jsonStr = "{\n";
-                        jsonStr += "  \"id\": " + lastId + ",\n";
+                        jsonStr += "  \"id\": " + targetId + ",\n";
                         jsonStr += "  \"content\": \"" + wise + "\",\n";
                         jsonStr += "  \"author\": \"" + author + "\"\n";
                         jsonStr += "}";
 
-                        FileWriter writer = new FileWriter("db/wiseSaying/" + lastId + ".json");
+                        FileWriter writer = new FileWriter("db/wiseSaying/" + targetId + ".json");
                         writer.write(jsonStr);
                         writer.close();
                     }
