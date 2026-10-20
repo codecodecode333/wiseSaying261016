@@ -148,9 +148,9 @@ public class Main {
                 }
                 else {
                     System.out.println("명언(기존) : " + wisearr[targetId]);
-                    System.out.print("명언 : " + authorarr[targetId]);
+                    System.out.print("명언 : ");
                     String wise = sc.nextLine().trim();
-                    System.out.println("작가(기존) : ");
+                    System.out.println("작가(기존) : "  + authorarr[targetId]);
                     System.out.print("작가 : ");
                     String author = sc.nextLine().trim();
 
