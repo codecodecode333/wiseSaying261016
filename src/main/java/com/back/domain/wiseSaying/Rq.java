@@ -16,8 +16,12 @@ public class Rq {
 
             for (String token : tokens) {
                 String[] param = token.split("=", 2);
-                params.put(param[0], param[1]);
+
+                if (param.length == 2) {
+                    params.put(param[0], param[1]);
+                }
             }
+        }
         }
     }
 
