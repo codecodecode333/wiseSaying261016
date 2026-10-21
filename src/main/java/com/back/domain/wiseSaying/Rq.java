@@ -11,11 +11,13 @@ public class Rq {
         String[] parts = command.split("\\?", 2);
         actionName = parts[0];
 
-        String[] tokens = parts[1].split("&");
+        if (parts.length == 2) {
+            String[] tokens = parts[1].split("&");
 
-        for(String token :tokens) {
-            String[] param = token.split("=", 2);
-            params.put(param[0], param[1]);
+            for (String token : tokens) {
+                String[] param = token.split("=", 2);
+                params.put(param[0], param[1]);
+            }
         }
     }
 
