@@ -22,7 +22,6 @@ public class Rq {
                 }
             }
         }
-        }
     }
 
     public String getActionName(){
