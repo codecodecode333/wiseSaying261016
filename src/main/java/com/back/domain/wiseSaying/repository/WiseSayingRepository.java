@@ -12,7 +12,7 @@ import java.util.List;
 public class WiseSayingRepository {
     private final String DB_PATH = "db/wiseSaying";
 
-    public void saveWiseSaying(WiseSaying wiseSaying, int lastId) throws IOException {
+    public void saveWiseSaying(WiseSaying wiseSaying) throws IOException {
         File dir = new File(DB_PATH);
         if (!dir.exists()){
             dir.mkdirs();
@@ -43,6 +43,21 @@ public class WiseSayingRepository {
             e.printStackTrace();
         }
     }
+    public int findLastId() throws IOException {
+        File file = new File(DB_PATH + "/lastId.txt");
+
+        if (!file.exists()) {
+            return 0;
+        }
+
+        String content = Files.readString(file.toPath()).trim();
+
+        if (content.isEmpty()) {
+            return 0;
+        }
+
+        return Integer.parseInt(content);
+    }
 
     public boolean deleteWiseSaying(int targetId){
         File file = new File("db/wiseSaying/" + targetId + ".json");
@@ -69,7 +84,7 @@ public class WiseSayingRepository {
         for (File file : files) {
             String fileName = file.getName();
 
-            if (fileName.endsWith(".json")) {
+            if (fileName.matches("\\d+\\.json")) {
                 try {
                     String jsonContent = new String(Files.readAllBytes(file.toPath()));
 

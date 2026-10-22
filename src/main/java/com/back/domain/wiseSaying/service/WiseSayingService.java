@@ -12,20 +12,29 @@ public class WiseSayingService {
     private int lastId;
     private final List<WiseSaying> wiseSayings;
 
-    public WiseSayingService(int lastId) {
-        this.lastId = lastId;
+    public WiseSayingService() throws IOException {
+        this.lastId = repository.findLastId() + 1;
         wiseSayings = repository.findAll();
     }
 
     public List<WiseSaying> findAll(){
-        return repository.findAll();
+        return List.copyOf(wiseSayings);
     }
 
-    public WiseSaying  register(String content, String author) throws IOException {
+    public WiseSaying findById(int targetId) {
+        return wiseSayings.stream()
+                .filter(ws -> ws.getId() == targetId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public WiseSaying register(String content, String author) throws IOException {
         WiseSaying ws = new WiseSaying(lastId, content, author);
 
         repository.saveWiseSaying(ws);
         repository.saveLastId(lastId++);
+
+        wiseSayings.add(ws);
 
         return ws;
     }
@@ -48,10 +57,7 @@ public class WiseSayingService {
         return true;
     }
     public boolean modify(int targetId, String content, String author) throws IOException {
-        WiseSaying ws = wiseSayings.stream()
-                .filter(w -> w.getId() == targetId)
-                .findFirst()
-                .orElse(null);
+        WiseSaying ws = findById(targetId);
 
         if(ws == null) {
             return false;
